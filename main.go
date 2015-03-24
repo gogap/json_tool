@@ -41,6 +41,9 @@ func main() {
 					Name:  "type, t",
 					Usage: "the value type, default is string, (string|int|float|object)",
 					Value: "string",
+				}, cli.BoolFlag{
+					Name:  "create, c",
+					Usage: "if create = true, the key will be create if env file not exist the key",
 				},
 			},
 		},
@@ -106,6 +109,7 @@ func set(c *cli.Context) {
 	key := c.String("key")
 	value := c.String("value")
 	Type := c.String("type")
+	create := c.Bool("create")
 
 	if files == nil || len(files) == 0 {
 		fmt.Println("file list is empty")
@@ -136,6 +140,10 @@ func set(c *cli.Context) {
 		if e != nil {
 			fmt.Println(e)
 			return
+		}
+
+		if _, exist := v[key]; !exist && !create {
+			continue
 		}
 
 		switch Type {
@@ -185,7 +193,6 @@ func set(c *cli.Context) {
 				}
 			}
 		}
-		fmt.Println("")
 	}
 }
 
